@@ -1,39 +1,51 @@
 ﻿using System.Linq.Expressions;
 using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
 {
     public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
     {
-        public Task<IQueryable<TEntity>> GetAllAsync()
+        protected DentistryAuthenticationContext DentistryAuthenticationContext;
+        protected readonly DbSet<TEntity> DbSet;
+        public BaseRepository(DentistryAuthenticationContext dentistryAuthenticationContext)
         {
-            throw new NotImplementedException();
+            DentistryAuthenticationContext = dentistryAuthenticationContext;
+            DbSet = dentistryAuthenticationContext.Set<TEntity>();
         }
 
-        public Task<TEntity> GetAsync(int id)
+        public async Task<IEnumerable<TEntity>> GetAll()
         {
-            throw new NotImplementedException();
+            return await DentistryAuthenticationContext.Set<TEntity>().ToArrayAsync();
         }
 
-        public Task<IQueryable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> expression)
+        public async Task<TEntity?> GetAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await DbSet.FindAsync();
         }
 
-        public Task CreateAsync(TEntity entity)
+        public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            throw new NotImplementedException();
+            return await DbSet.Where(predicate).ToArrayAsync();
         }
 
-        public Task UpdateAsync(TEntity entity)
+        public async Task CreateAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            await DbSet.AddAsync(entity);
+            await DentistryAuthenticationContext.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(Guid id)
+        public async Task UpdateAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            DbSet.Update(entity);
+            await DentistryAuthenticationContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(TEntity entity)
+        {
+            DbSet.Remove(entity);
+            await DentistryAuthenticationContext.SaveChangesAsync();
         }
     }
 }

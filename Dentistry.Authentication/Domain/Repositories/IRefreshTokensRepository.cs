@@ -1,6 +1,8 @@
-﻿namespace Domain.Repositories
+﻿using Domain.Entities;
+
+namespace Domain.Repositories
 {
-    internal interface IRefreshTokensRepository
+    public interface IRefreshTokensRepository : IRepository<RefreshToken>
     {
     }
 }
