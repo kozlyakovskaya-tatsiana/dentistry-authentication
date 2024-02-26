@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.Configurations
 {
-    public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
+    public class UserRoleConfiguration : IEntityTypeConfiguration<Role>
     {
-        public void Configure(EntityTypeBuilder<UserRole> builder)
+        public void Configure(EntityTypeBuilder<Role> builder)
         {
             builder.HasKey(ur => ur.Id);
             builder
@@ -14,7 +14,7 @@ namespace Persistence.Configurations
                 .IsRequired();
             builder
                 .HasMany(ur => ur.Users)
-                .WithMany(u => u.UserRoles);
+                .WithMany(u => u.Roles);
         }
     }
 }

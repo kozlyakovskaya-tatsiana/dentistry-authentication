@@ -1,6 +1,7 @@
-﻿using Domain.Constants;
-using Domain.Entities;
+﻿using Domain.Entities;
+using Domain.Enumerations;
 using Microsoft.EntityFrameworkCore;
+using Role = Domain.Entities.Role;
 
 namespace Persistence
 {
@@ -21,17 +22,17 @@ namespace Persistence
 
         private async Task SeedRolesAsync()
         {
-            if (!_dentistryAuthenticationContext.Roles.Any(role => role.Name == UserRoles.Admin))
+            if (!_dentistryAuthenticationContext.Roles.Any(role => role.Name == UserRoleType.Admin.Name))
             {
-                await _dentistryAuthenticationContext.Roles.AddAsync(new UserRole { Name = UserRoles.Admin });
+                await _dentistryAuthenticationContext.Roles.AddAsync(new Role { Name = UserRoleType.Admin.Name });
             }
-            if (!_dentistryAuthenticationContext.Roles.Any(role => role.Name == UserRoles.Doctor))
+            if (!_dentistryAuthenticationContext.Roles.Any(role => role.Name == UserRoleType.Doctor.Name))
             {
-                await _dentistryAuthenticationContext.Roles.AddAsync(new UserRole { Name = UserRoles.Doctor });
+                await _dentistryAuthenticationContext.Roles.AddAsync(new Role { Name = UserRoleType.Doctor.Name });
             }
-            if (!_dentistryAuthenticationContext.Roles.Any(role => role.Name == UserRoles.Patient))
+            if (!_dentistryAuthenticationContext.Roles.Any(role => role.Name == UserRoleType.Patient.Name))
             {
-                await _dentistryAuthenticationContext.Roles.AddAsync(new UserRole { Name = UserRoles.Patient });
+                await _dentistryAuthenticationContext.Roles.AddAsync(new Role { Name = UserRoleType.Patient.Name });
             }
 
             await _dentistryAuthenticationContext.SaveChangesAsync();

@@ -18,11 +18,13 @@ namespace Persistence.Configurations
                 .Property(u => u.PasswordHash)
                 .IsRequired();
 
+            // describe relationships only in daughter object
+
             builder
                 .HasMany(u => u.RefreshTokens)
                 .WithOne(rt => rt.User);
             builder
-                .HasMany(r => r.UserRoles)
+                .HasMany(r => r.Roles)
                 .WithMany(ur => ur.Users);
         }
     }

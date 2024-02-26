@@ -5,7 +5,7 @@ namespace Domain.Repositories
 {
     public interface IRepository<TEntity> where TEntity : BaseEntity
     {
-        Task<IEnumerable<TEntity>> GetAll();
+        Task<IEnumerable<TEntity>> GetAllAsync();
         Task<TEntity?> GetAsync(Guid id);
         Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
         Task CreateAsync(TEntity entity);

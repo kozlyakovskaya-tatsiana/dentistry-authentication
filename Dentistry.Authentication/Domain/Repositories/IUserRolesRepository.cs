@@ -2,7 +2,7 @@
 
 namespace Domain.Repositories
 {
-    public interface IUserRolesRepository : IRepository<UserRole>
+    public interface IUserRolesRepository : IRepository<Role>
     {
     }
 }

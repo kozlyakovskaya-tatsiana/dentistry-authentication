@@ -15,7 +15,7 @@ namespace Persistence.Repositories
             DbSet = dentistryAuthenticationContext.Set<TEntity>();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAll()
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
             return await DentistryAuthenticationContext.Set<TEntity>().ToArrayAsync();
         }
@@ -49,3 +49,6 @@ namespace Persistence.Repositories
         }
     }
 }
+
+// get rid of savcecganhes async
+

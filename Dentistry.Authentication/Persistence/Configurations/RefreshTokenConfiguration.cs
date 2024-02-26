@@ -18,7 +18,8 @@ namespace Persistence.Configurations
                 .IsRequired();
             builder
                 .HasOne(rt => rt.User)
-                .WithMany(u => u.RefreshTokens);
+                .WithMany(u => u.RefreshTokens)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
