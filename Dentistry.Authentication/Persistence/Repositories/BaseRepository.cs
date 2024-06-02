@@ -22,7 +22,7 @@ namespace Persistence.Repositories
 
         public async Task<TEntity?> GetAsync(Guid id)
         {
-            return await DbSet.FindAsync();
+            return await DbSet.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
@@ -30,25 +30,24 @@ namespace Persistence.Repositories
             return await DbSet.Where(predicate).ToArrayAsync();
         }
 
-        public async Task CreateAsync(TEntity entity)
+        public void Create(TEntity entity)
         {
-            await DbSet.AddAsync(entity);
-            await DentistryAuthenticationContext.SaveChangesAsync();
+            DbSet.Add(entity);
         }
 
-        public async Task UpdateAsync(TEntity entity)
+        public void Update(TEntity entity)
         {
             DbSet.Update(entity);
-            await DentistryAuthenticationContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(TEntity entity)
+        public void Delete(TEntity entity)
         {
             DbSet.Remove(entity);
+        }
+
+        public async Task SaveAsync()
+        {
             await DentistryAuthenticationContext.SaveChangesAsync();
         }
     }
 }
-
-// get rid of savcecganhes async
-

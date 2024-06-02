@@ -16,10 +16,6 @@ namespace Persistence.Configurations
             builder
                 .Property(rt => rt.ExpiredDateTime)
                 .IsRequired();
-            builder
-                .HasOne(rt => rt.User)
-                .WithMany(u => u.RefreshTokens)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

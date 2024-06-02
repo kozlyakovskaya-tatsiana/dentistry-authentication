@@ -8,8 +8,9 @@ namespace Domain.Repositories
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<TEntity?> GetAsync(Guid id);
         Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
-        Task CreateAsync(TEntity entity);
-        Task UpdateAsync(TEntity entity);
-        Task DeleteAsync(TEntity entity);
+        void Create(TEntity entity);
+        void Update(TEntity entity);
+        void Delete(TEntity entity);
+        Task SaveAsync();
     }
 }

@@ -1,5 +1,7 @@
 using Application;
+using FluentValidation.AspNetCore;
 using Persistence;
+using WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +12,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDatabaseConfigurations(builder.Configuration);
-builder.Services.AddApplication();
+builder.Services.AddDatabaseServices(builder.Configuration);
+builder.Services.AddApplicationServices();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
 
 var app = builder.Build();
 
@@ -24,6 +29,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseApplicationMiddlewares();
 
 app.UseAuthorization();
 

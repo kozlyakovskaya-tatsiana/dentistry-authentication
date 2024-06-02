@@ -6,9 +6,9 @@ using Persistence.Repositories;
 
 namespace Persistence
 {
-    public static class DependencyInjection
+    public static class DatabaseServicesInjection
     {
-        public static void AddDatabaseConfigurations(this IServiceCollection services, IConfiguration configuration)
+        public static void AddDatabaseServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<DentistryAuthenticationContext>(
                 options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
@@ -17,7 +17,7 @@ namespace Persistence
 
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IUsersRepository, UsersRepository>();
-            services.AddScoped<IUserRolesRepository, UserRoleRepository>();
+            services.AddScoped<IRolesRepository, RolesRepository>();
             services.AddScoped<IRefreshTokensRepository, RefreshTokensRepository>();
         }
     }

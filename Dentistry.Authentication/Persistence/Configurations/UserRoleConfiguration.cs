@@ -12,9 +12,6 @@ namespace Persistence.Configurations
             builder
                 .Property(ur => ur.Name)
                 .IsRequired();
-            builder
-                .HasMany(ur => ur.Users)
-                .WithMany(u => u.Roles);
         }
     }
 }

@@ -2,6 +2,6 @@
 
 namespace Domain.Repositories
 {
-    public interface IUsersRepository : IRepository<User>
+    public interface IRolesRepository : IRepository<Role>
     { }
 }

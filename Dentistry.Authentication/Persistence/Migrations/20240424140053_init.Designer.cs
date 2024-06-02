@@ -12,8 +12,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DentistryAuthenticationContext))]
-    [Migration("20240220123313_Init")]
-    partial class Init
+    [Migration("20240424140053_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -47,6 +47,21 @@ namespace Persistence.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -54,6 +69,7 @@ namespace Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
@@ -69,34 +85,19 @@ namespace Persistence.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("RoleUser", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("UserUserRole", b =>
-                {
-                    b.Property<Guid>("UserRolesId")
+                    b.Property<Guid>("RolesId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("UsersId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("UserRolesId", "UsersId");
+                    b.HasKey("RolesId", "UsersId");
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("UserUserRole");
+                    b.ToTable("RoleUser");
                 });
 
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
@@ -110,11 +111,11 @@ namespace Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UserUserRole", b =>
+            modelBuilder.Entity("RoleUser", b =>
                 {
-                    b.HasOne("Domain.Entities.UserRole", null)
+                    b.HasOne("Domain.Entities.Role", null)
                         .WithMany()
-                        .HasForeignKey("UserRolesId")
+                        .HasForeignKey("RolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
