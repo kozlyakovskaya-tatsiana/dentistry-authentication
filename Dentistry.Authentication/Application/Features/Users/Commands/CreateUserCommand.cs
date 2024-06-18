@@ -30,6 +30,10 @@ namespace Application.Features.Users.Commands
         public async Task Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var role = await _rolesRepository.GetAsync(request.RoleId);
+            if (role == null)
+            {
+                throw new ArgumentException(nameof(request.RoleId));
+            }
             var user = new User(request.PhoneNumber, request.Email, request.Password, new[] { role }, _passwordHasher);
 
             _usersRepository.Create(user);

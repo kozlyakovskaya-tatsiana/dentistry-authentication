@@ -9,15 +9,29 @@ namespace Persistence.Repositories
     {
         protected DentistryAuthenticationContext DentistryAuthenticationContext;
         protected readonly DbSet<TEntity> DbSet;
+
         public BaseRepository(DentistryAuthenticationContext dentistryAuthenticationContext)
         {
             DentistryAuthenticationContext = dentistryAuthenticationContext;
             DbSet = dentistryAuthenticationContext.Set<TEntity>();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        public IQueryable<TEntity> Query()
         {
-            return await DentistryAuthenticationContext.Set<TEntity>().ToArrayAsync();
+            return DbSet.AsQueryable();
+        }
+
+        public async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? predicate = null, bool isNoTracking = true)
+        {
+            
+            var query = isNoTracking ? DbSet.AsNoTracking() : DbSet;
+            
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            return await query.ToArrayAsync();
         }
 
         public async Task<TEntity?> GetAsync(Guid id)
@@ -49,5 +63,25 @@ namespace Persistence.Repositories
         {
             await DentistryAuthenticationContext.SaveChangesAsync();
         }
+
+        /*public IQueryable<TEntity> GetAllWithInclude(
+            Expression<Func<TEntity, bool>>? predicate = null,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+            bool disableTracking = true)
+        {
+            var query = disableTracking ? DbSet.AsNoTracking() : DbSet;
+
+            if (include != null)
+            {
+                query = include(query);
+            }
+
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            return query;
+        }*/
     }
 }

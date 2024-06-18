@@ -24,17 +24,16 @@ namespace WebApi.Middleware
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            var message = exception switch
+            context.Response.StatusCode = exception switch
             {
-                _ => "Internal Server Error from the custom middleware."
+                ArgumentNullException => (int)HttpStatusCode.BadRequest,
+                ArgumentException => (int)HttpStatusCode.BadRequest,
+                _ => (int)HttpStatusCode.InternalServerError
             };
 
             await context.Response.WriteAsync(new ErrorDetails()
             {
                 StatusCode = context.Response.StatusCode,
-                Message = message
             }.ToString());
         }
     }
@@ -42,7 +41,6 @@ namespace WebApi.Middleware
     public class ErrorDetails
     {
         public int StatusCode { get; set; }
-        public string Message { get; set; }
         public override string ToString()
         {
             return JsonSerializer.Serialize(this);

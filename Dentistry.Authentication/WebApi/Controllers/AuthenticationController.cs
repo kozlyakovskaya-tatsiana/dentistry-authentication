@@ -1,5 +1,4 @@
-﻿using Application.Features.Roles.Queries;
-using Application.Features.Users.Commands;
+﻿using Application.Features.Authentication.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,20 +15,17 @@ namespace WebApi.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("roles")]
-        public async Task<IActionResult> GetRoles()
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginUserCommand loginUserCommand)
         {
-            var roles = await _mediator.Send(new GetAllRolesQuery());
+            var loginResponse = await _mediator.Send(loginUserCommand);
 
-            return Ok(roles);
+            return Ok(loginResponse);
         }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterUser(CreateUserCommand createUserCommand)
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh(RefreshTokenCommand refreshTokensCommand)
         {
-            await _mediator.Send(createUserCommand);
-
-            return Ok();
+            return Ok(await _mediator.Send(refreshTokensCommand));
         }
     }
 }
