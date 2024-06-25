@@ -1,8 +1,8 @@
-﻿namespace Application.Settings
+﻿namespace Application.Options
 {
-    public class JwtSettings
+    public class JwtOptions
     {
-        public const string SettingName = "JwtSettings";
+        public const string SectionName = "Jwt";
 
         public string Key { get; set; }
         public string Issuer { get; set; }

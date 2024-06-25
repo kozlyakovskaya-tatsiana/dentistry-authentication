@@ -1,8 +1,8 @@
-﻿using Domain.Services;
+﻿using Application.Services.Interfaces;
 
-namespace Application.Services.Implementation
+namespace Application.Services
 {
-    public class PasswordHasher : IPasswordHasher
+    public class PasswordHashService : IPasswordHashService
     {
         public string Hash(string password)
         {

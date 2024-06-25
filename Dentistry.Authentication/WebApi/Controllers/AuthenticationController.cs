@@ -25,7 +25,9 @@ namespace WebApi.Controllers
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh(RefreshTokenCommand refreshTokensCommand)
         {
-            return Ok(await _mediator.Send(refreshTokensCommand));
+            var refreshTokensResponse = await _mediator.Send(refreshTokensCommand);
+
+            return Ok(refreshTokensResponse);
         }
     }
 }

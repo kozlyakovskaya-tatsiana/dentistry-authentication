@@ -2,9 +2,25 @@
 {
     public class RefreshToken : BaseEntity
     {
-        public string Token { get; set; }
-        public DateTimeOffset ExpiredDateTime { get; set; }
-        public User User { get; set; }
-        public Guid UserId { get; set; }
+        private RefreshToken() {}
+        public string Token { get; private set; }
+        public DateTimeOffset ExpireDateTime { get; private set; }
+        public User User { get; private set; }
+        public Guid UserId { get; private set; }
+
+        public static RefreshToken Create(string token, DateTimeOffset expireDateTime, User user)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+                throw new ArgumentNullException(nameof(token));
+            if (user is null)
+                throw new ArgumentNullException(nameof(user));
+
+            return new RefreshToken()
+            {
+                Token = token, 
+                ExpireDateTime = expireDateTime,
+                User = user
+            };
+        }
     }
 }

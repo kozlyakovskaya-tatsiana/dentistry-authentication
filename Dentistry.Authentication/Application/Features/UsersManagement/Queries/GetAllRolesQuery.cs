@@ -3,7 +3,7 @@ using Domain.Repositories;
 using Mapster;
 using MediatR;
 
-namespace Application.Features.Roles.Queries
+namespace Application.Features.UsersManagement.Queries
 {
     public record GetAllRolesQuery : IRequest<IEnumerable<RoleDto>> { }
 

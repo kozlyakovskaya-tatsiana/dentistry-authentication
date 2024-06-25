@@ -1,10 +1,11 @@
-﻿using Domain.Entities;
+﻿using Application.Exceptions;
+using Application.Services.Interfaces;
+using Domain.Entities;
 using Domain.Repositories;
-using Domain.Services;
 using FluentValidation;
 using MediatR;
 
-namespace Application.Features.Users.Commands
+namespace Application.Features.UsersManagement.Commands
 {
     public class CreateUserCommand : IRequest
     {
@@ -18,12 +19,12 @@ namespace Application.Features.Users.Commands
     {
         private readonly IUsersRepository _usersRepository;
         private readonly IRolesRepository _rolesRepository;
-        private readonly IPasswordHasher _passwordHasher;
+        private readonly IPasswordHashService _passwordHashService;
 
-        public CreateUserCommandHandler(IUsersRepository usersRepository, IPasswordHasher passwordHasher, IRolesRepository rolesRepository)
+        public CreateUserCommandHandler(IUsersRepository usersRepository, IPasswordHashService passwordHashService, IRolesRepository rolesRepository)
         {
             _usersRepository = usersRepository;
-            _passwordHasher = passwordHasher;
+            _passwordHashService = passwordHashService;
             _rolesRepository = rolesRepository;
         }
 
@@ -34,7 +35,15 @@ namespace Application.Features.Users.Commands
             {
                 throw new ArgumentException(nameof(request.RoleId));
             }
-            var user = new User(request.PhoneNumber, request.Email, request.Password, new[] { role }, _passwordHasher);
+
+            var isUserAlreadyExisting = await _usersRepository.Exists(request.PhoneNumber);
+
+            if (isUserAlreadyExisting)
+                throw new EntityAlreadyExistException($"User with phone number {request.PhoneNumber} already exists.");   
+
+            var passwordHash = _passwordHashService.Hash(request.Password);
+
+            var user = User.Create(request.PhoneNumber, request.Email, passwordHash, new[] { role }, null);
 
             _usersRepository.Create(user);
 

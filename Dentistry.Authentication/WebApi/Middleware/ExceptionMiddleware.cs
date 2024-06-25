@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using Application.Exceptions;
 
 namespace WebApi.Middleware
 {
@@ -28,6 +29,8 @@ namespace WebApi.Middleware
             {
                 ArgumentNullException => (int)HttpStatusCode.BadRequest,
                 ArgumentException => (int)HttpStatusCode.BadRequest,
+                KeyNotFoundException => (int)HttpStatusCode.NotFound,
+                EntityAlreadyExistException => (int)HttpStatusCode.Conflict,
                 _ => (int)HttpStatusCode.InternalServerError
             };
 

@@ -1,6 +1,6 @@
-﻿namespace Domain.Consts
+﻿namespace Application.Consts
 {
-    public static class Policy
+    public static class AuthenticationPolicies
     {
         public const string PatientOnly = "ForPatientOnly";
         public const string DoctorOnly = "ForDoctorOnly";

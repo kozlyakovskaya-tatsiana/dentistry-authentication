@@ -3,7 +3,7 @@ using Domain.Repositories;
 using Mapster;
 using MediatR;
 
-namespace Application.Features.Users.Queries
+namespace Application.Features.UsersManagement.Queries
 {
     public record GetUsersQuery : IRequest<IEnumerable<UserDto>> { }
 

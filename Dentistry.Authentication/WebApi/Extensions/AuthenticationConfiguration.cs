@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text;
-using Application.Settings;
-using Domain.Consts;
+using Application.Consts;
+using Application.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,12 +11,12 @@ namespace WebApi.Extensions
     {
         public static void AddAuthenticationAndAuthorization(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SettingName));
+            services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    var jwtSettings = configuration.GetSection(JwtSettings.SettingName).Get<JwtSettings>();
+                    var jwtSettings = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>();
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -26,22 +26,23 @@ namespace WebApi.Extensions
                         ValidIssuer = jwtSettings.Issuer,
                         ValidAudience = jwtSettings.Audience,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
 
             services.AddAuthorization(opts =>
             {
-                opts.AddPolicy(Policy.PatientOnly, policy =>
+                opts.AddPolicy(AuthenticationPolicies.PatientOnly, policy =>
                 {
-                    policy.RequireClaim(ClaimTypes.Role, UserRoles.Patient);
+                    policy.RequireClaim(ClaimTypes.Role, RoleNames.Patient);
                 });
-                opts.AddPolicy(Policy.DoctorOnly, policy =>
+                opts.AddPolicy(AuthenticationPolicies.DoctorOnly, policy =>
                 {
-                    policy.RequireClaim(ClaimTypes.Role, UserRoles.Doctor);
+                    policy.RequireClaim(ClaimTypes.Role, RoleNames.Doctor);
                 });
-                opts.AddPolicy(Policy.AdminOnly, policy =>
+                opts.AddPolicy(AuthenticationPolicies.AdminOnly, policy =>
                 {
-                    policy.RequireClaim(ClaimTypes.Role, UserRoles.Admin);
+                    policy.RequireClaim(ClaimTypes.Role, RoleNames.Admin);
                 });
             });
         }

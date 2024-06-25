@@ -1,4 +1,4 @@
-﻿using Domain.Consts;
+﻿using Application.Consts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,19 +22,19 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("doctor-only")]
-        [Authorize(Policy = Policy.DoctorOnly)]
+        [Authorize(Policy = AuthenticationPolicies.DoctorOnly)]
         public IActionResult GetInfoForDoctor()
         {
             return Ok("You are a doctor.");
         }
         [HttpGet("patient-only")]
-        [Authorize(Policy = Policy.PatientOnly)]
+        [Authorize(Policy = AuthenticationPolicies.PatientOnly)]
         public IActionResult GetInfoForPatient()
         {
             return Ok("You are a patient.");
         }
         [HttpGet("admin-only")]
-        [Authorize(Policy = Policy.AdminOnly)]
+        [Authorize(Policy = AuthenticationPolicies.AdminOnly)]
         public IActionResult GetInfoForAdmin()
         {
             return Ok("You are an admin.");

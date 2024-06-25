@@ -7,24 +7,18 @@ namespace Persistence.Repositories
 {
     public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
     {
-        protected DentistryAuthenticationContext DentistryAuthenticationContext;
+        protected DentistryAuthenticationContext Context;
         protected readonly DbSet<TEntity> DbSet;
 
-        public BaseRepository(DentistryAuthenticationContext dentistryAuthenticationContext)
+        public BaseRepository(DentistryAuthenticationContext context)
         {
-            DentistryAuthenticationContext = dentistryAuthenticationContext;
-            DbSet = dentistryAuthenticationContext.Set<TEntity>();
+            Context = context;
+            DbSet = context.Set<TEntity>();
         }
 
-        public IQueryable<TEntity> Query()
+        public async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? predicate = null)
         {
-            return DbSet.AsQueryable();
-        }
-
-        public async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? predicate = null, bool isNoTracking = true)
-        {
-            
-            var query = isNoTracking ? DbSet.AsNoTracking() : DbSet;
+            var query = DbSet.AsQueryable();
             
             if (predicate != null)
             {
@@ -39,11 +33,6 @@ namespace Persistence.Repositories
             return await DbSet.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
-        {
-            return await DbSet.Where(predicate).ToArrayAsync();
-        }
-
         public void Create(TEntity entity)
         {
             DbSet.Add(entity);
@@ -54,34 +43,18 @@ namespace Persistence.Repositories
             DbSet.Update(entity);
         }
 
-        public void Delete(TEntity entity)
+        public async Task DeleteAsync(Guid id)
         {
+            var entity = await DbSet.FirstOrDefaultAsync(e => e.Id == id);
+            if (entity is null)
+                throw new KeyNotFoundException();
+
             DbSet.Remove(entity);
         }
 
         public async Task SaveAsync()
         {
-            await DentistryAuthenticationContext.SaveChangesAsync();
+            await Context.SaveChangesAsync();
         }
-
-        /*public IQueryable<TEntity> GetAllWithInclude(
-            Expression<Func<TEntity, bool>>? predicate = null,
-            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
-            bool disableTracking = true)
-        {
-            var query = disableTracking ? DbSet.AsNoTracking() : DbSet;
-
-            if (include != null)
-            {
-                query = include(query);
-            }
-
-            if (predicate != null)
-            {
-                query = query.Where(predicate);
-            }
-
-            return query;
-        }*/
     }
 }

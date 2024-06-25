@@ -19,6 +19,9 @@ namespace Persistence.Configurations
                 .IsRequired();
 
             builder
+                .Property(u => u.Email);
+
+            builder
                 .HasMany(u => u.RefreshTokens)
                 .WithOne(rt => rt.User);
 

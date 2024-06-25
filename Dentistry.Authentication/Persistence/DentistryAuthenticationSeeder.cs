@@ -1,21 +1,15 @@
-﻿using Domain.Consts;
-using Domain.Entities;
-using Domain.Services;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Role = Domain.Entities.Role;
 
 namespace Persistence
 {
     public class DentistryAuthenticationSeeder
     {
         private readonly DentistryAuthenticationContext _dentistryAuthenticationContext;
-        private readonly IPasswordHasher _passwordHasher;
 
-        public DentistryAuthenticationSeeder(
-            DentistryAuthenticationContext dentistryAuthenticationContext, IPasswordHasher passwordHasher)
+        public DentistryAuthenticationSeeder(DentistryAuthenticationContext dentistryAuthenticationContext)
         {
             _dentistryAuthenticationContext = dentistryAuthenticationContext;
-            _passwordHasher = passwordHasher;
         }
 
         public async Task SeedAsync()
@@ -27,19 +21,19 @@ namespace Persistence
 
         private async Task SeedRolesAsync()
         {
-            if (!_dentistryAuthenticationContext.Roles.Any(role => role.Name == UserRoles.Admin))
+            if (!_dentistryAuthenticationContext.Roles.Any(role => role.Name == "admin"))
             {
-                await _dentistryAuthenticationContext.Roles.AddAsync(new Role { Name = UserRoles.Admin });
+                await _dentistryAuthenticationContext.Roles.AddAsync(Role.Create("admin"));
             }
 
-            if (!_dentistryAuthenticationContext.Roles.Any(role => role.Name == UserRoles.Doctor))
+            if (!_dentistryAuthenticationContext.Roles.Any(role => role.Name == "doctor"))
             {
-                await _dentistryAuthenticationContext.Roles.AddAsync(new Role { Name = UserRoles.Doctor });
+                await _dentistryAuthenticationContext.Roles.AddAsync(Role.Create("doctor"));
             }
 
-            if (!_dentistryAuthenticationContext.Roles.Any(role => role.Name == UserRoles.Patient))
+            if (!_dentistryAuthenticationContext.Roles.Any(role => role.Name == "patient"))
             {
-                await _dentistryAuthenticationContext.Roles.AddAsync(new Role { Name = UserRoles.Patient });
+                await _dentistryAuthenticationContext.Roles.AddAsync(Role.Create("patient"));
             }
 
             await _dentistryAuthenticationContext.SaveChangesAsync();
@@ -50,17 +44,19 @@ namespace Persistence
             if (!await _dentistryAuthenticationContext.Users.AnyAsync())
             {
                 var roles = await _dentistryAuthenticationContext.Roles.ToArrayAsync();
-                var adminRole = roles.First(role => role.Name == UserRoles.Admin);
-                var doctorRole = roles.First(role => role.Name == UserRoles.Doctor);
-                var patientRole = roles.First(role => role.Name == UserRoles.Patient);
-                var users = new User[]
-                {
-                    new("111111", "admin@test.com", "admin#", new[] { adminRole }, _passwordHasher),
-                    new("222222", "doctor@test.com", "doctor#", new[] { doctorRole }, _passwordHasher),
-                    new("333333", "patient@test.com", "patient#", new[] { patientRole }, _passwordHasher),
-                };
+                var adminRole = roles.First(role => role.Name == "admin");
+                var doctorRole = roles.First(role => role.Name == "doctor");
+                var patientRole = roles.First(role => role.Name == "patient");
 
-                _dentistryAuthenticationContext.Users.AddRange(users);
+                const string password = "default_password";
+                const string passwordHash = "$2a$11$l3Tfn90Fk3IrlzWjLTbYLO.TorOFClsEeUVaWTaSjaqdHH/SynGVu";
+
+                var admin = User.Create("111111", "admin@test.com", passwordHash, new[] { adminRole }, null);
+                var user = User.Create("222222", "doctor@test.com", passwordHash, new[] { doctorRole }, null);
+                var patient = User.Create("333333", "patient@test.com", passwordHash, new[] { patientRole }, null);
+                
+                _dentistryAuthenticationContext.Users.AddRange(admin, user, patient);
+
                 await _dentistryAuthenticationContext.SaveChangesAsync();
             }
         }

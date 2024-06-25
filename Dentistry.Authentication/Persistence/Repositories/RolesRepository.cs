@@ -5,7 +5,7 @@ namespace Persistence.Repositories
 {
     public class RolesRepository : BaseRepository<Role>, IRolesRepository
     {
-        public RolesRepository(DentistryAuthenticationContext dentistryAuthenticationContext) : base(dentistryAuthenticationContext)
+        public RolesRepository(DentistryAuthenticationContext context) : base(context)
         { }
     }
 }

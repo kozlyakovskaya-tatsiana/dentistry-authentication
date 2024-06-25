@@ -1,6 +1,6 @@
-﻿namespace Domain.Services
+﻿namespace Application.Services.Interfaces
 {
-    public interface IPasswordHasher
+    public interface IPasswordHashService
     {
         string Hash(string password);
         bool Verify(string password, string passwordHash);

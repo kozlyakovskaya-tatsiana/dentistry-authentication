@@ -14,7 +14,7 @@ namespace Persistence.Configurations
                 .Property(rt => rt.Token)
                 .IsRequired();
             builder
-                .Property(rt => rt.ExpiredDateTime)
+                .Property(rt => rt.ExpireDateTime)
                 .IsRequired();
         }
     }

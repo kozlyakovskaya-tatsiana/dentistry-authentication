@@ -1,12 +1,8 @@
 ﻿using Application.Models.Authentication;
 using MediatR;
-using System.Security.Claims;
-using Application.Services;
-using Domain.Entities;
+using Application.Services.Interfaces;
 using Domain.Repositories;
 using FluentValidation;
-using Application.Settings;
-using Microsoft.Extensions.Options;
 
 namespace Application.Features.Authentication.Commands
 {
@@ -20,69 +16,44 @@ namespace Application.Features.Authentication.Commands
     {
         private readonly ITokenService _tokenService;
         private readonly IUsersRepository _usersRepository;
-        private readonly JwtSettings _jwtSettings;
+        private readonly IPasswordManagerService _passwordManagerService;
 
-        public LoginUserCommandHandler(ITokenService tokenService, IUsersRepository usersRepository, IOptions<JwtSettings> jwtSettings)
+        public LoginUserCommandHandler(
+            ITokenService tokenService,
+            IUsersRepository usersRepository,
+            IPasswordManagerService passwordManagerService)
         {
-            _tokenService = tokenService;
+            _tokenService = tokenService; // throw exception service doesn't loaded 
             _usersRepository = usersRepository;
-            _jwtSettings = jwtSettings.Value;
+            _passwordManagerService = passwordManagerService;
         }
 
         public async Task<TokenPair> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _usersRepository.FindByPhoneNumberAsync(request.PhoneNumber, true);
+            var user = await _usersRepository.GetDetailedInfoByPhoneNumberAsync(request.PhoneNumber);
             if (user is null)
             {
                 throw new ArgumentException("No user with such phone number.");
             }
-
-            var isUserAuthenticated = _usersRepository.CheckPassword(user, request.Password);
+            var isUserAuthenticated = _passwordManagerService.CheckPassword(request.Password, user.PasswordHash);
             if (!isUserAuthenticated)
             {
                 throw new ArgumentException("Phone number or password is incorrect.");
             }
 
-            var userClaims = await GenerateUserClaimsAsync(user);
-
+            // Combine into 1 method?
+            var userClaims = _tokenService.GenerateUserClaims(user);
             var accessToken = _tokenService.GenerateAccessToken(userClaims);
+            // Replace with GenerateUserRefreshToken?
             var refreshToken = _tokenService.GenerateRefreshToken();
 
-
-            // extract to a method?
-            var refreshTokenExpiry = DateTimeOffset.UtcNow.AddMinutes(_jwtSettings.RefreshTokenLifeTimeInMinutes);
-            var newRefreshToken = new RefreshToken
-            {
-                ExpiredDateTime = refreshTokenExpiry,
-                Token = refreshToken
-            };
-
-            user.RefreshTokens ??= new List<RefreshToken>();
-            user.RefreshTokens.Add(newRefreshToken);
-
-            await _usersRepository.SaveAsync();
+            await _tokenService.SaveRefreshTokenAsync(user, refreshToken);
 
             return new TokenPair()
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
             };
-        }
-        // move to service?
-        private async Task<IEnumerable<Claim>> GenerateUserClaimsAsync(User user)
-        {
-            var userRoles = await _usersRepository.GetUserRolesAsync(user);
-            var userRolesClaims = userRoles.Select(r => new Claim(ClaimTypes.Role, r.Name));
-
-            var claims = new List<Claim>(userRolesClaims);
-            claims.AddRange(new[]
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim("uid", user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.PhoneNumber),
-            });
-
-            return claims;
         }
     }
 

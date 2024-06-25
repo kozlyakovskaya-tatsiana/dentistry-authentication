@@ -1,6 +1,6 @@
 ﻿using Application.Models.Authentication;
-using Application.Services;
-using Application.Settings;
+using Application.Options;
+using Application.Services.Interfaces;
 using Domain.Repositories;
 using FluentValidation;
 using MediatR;
@@ -18,13 +18,11 @@ namespace Application.Features.Authentication.Commands
     {
         private readonly ITokenService _tokenService;
         private readonly IUsersRepository _usersRepository;
-        private readonly JwtSettings _jwtSettings;
 
-        public RefreshTokenCommandHandler(ITokenService tokenService, IUsersRepository usersRepository, IOptions<JwtSettings> jwtSettings)
+        public RefreshTokenCommandHandler(ITokenService tokenService, IUsersRepository usersRepository, IOptions<JwtOptions> jwtSettings)
         {
             _tokenService = tokenService;
             _usersRepository = usersRepository;
-            _jwtSettings = jwtSettings.Value;
         }
 
         public async Task<TokenPair> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
@@ -33,23 +31,20 @@ namespace Application.Features.Authentication.Commands
             var userName = principal?.Identity?.Name
                            ?? throw new ArgumentException("Invalid data to refresh tokens: user name is null");
 
-            var user = await _usersRepository.FindByPhoneNumberAsync(userName, includeRefreshTokens: true)
+            var user = await _usersRepository.GetDetailedInfoByPhoneNumberAsync(userName)
                        ?? throw new ArgumentException("Invalid data to refresh tokens: user not found");
 
             var existingRefreshToken = user.RefreshTokens?.FirstOrDefault(t => t.Token == request.RefreshToken);
-            if (existingRefreshToken is null || existingRefreshToken.ExpiredDateTime <= DateTime.UtcNow)
+            if (existingRefreshToken is null || existingRefreshToken.ExpireDateTime <= DateTime.UtcNow)
             {
-                // custom exception for refresh token? to return 401
                 throw new ArgumentException("Invalid data to refresh tokens");
             }
 
             var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims);
+            // rename CrateRefreshTokenForUser?
             var newRefreshToken = _tokenService.GenerateRefreshToken();
 
-            existingRefreshToken.Token = newRefreshToken;
-            existingRefreshToken.ExpiredDateTime =
-                DateTimeOffset.UtcNow.AddMinutes(_jwtSettings.RefreshTokenLifeTimeInMinutes);
-            await _usersRepository.SaveAsync();
+            await _tokenService.SaveRefreshTokenAsync(user, newRefreshToken);
 
             return new TokenPair
             {
@@ -57,13 +52,6 @@ namespace Application.Features.Authentication.Commands
                 RefreshToken = newRefreshToken
             };
         }
-
-        /*private bool ValidateRefreshToken(IEnumerable<RefreshToken>? refreshTokens, string refreshToken)
-        {
-            var existingRefreshToken = refreshTokens?.FirstOrDefault(t => t.Token == refreshToken);
-
-            return existingRefreshToken is not null && existingRefreshToken.ExpiredDateTime > DateTime.UtcNow;
-        }*/
     }
 
     public sealed class RefreshTokenCommandValidator : AbstractValidator<RefreshTokenCommand>

@@ -5,7 +5,7 @@ namespace Persistence.Repositories
 {
     public class RefreshTokensRepository : BaseRepository<RefreshToken>, IRefreshTokensRepository
     {
-        public RefreshTokensRepository(DentistryAuthenticationContext dentistryAuthenticationContext) : base(dentistryAuthenticationContext)
+        public RefreshTokensRepository(DentistryAuthenticationContext context) : base(context)
         {
         }
     }

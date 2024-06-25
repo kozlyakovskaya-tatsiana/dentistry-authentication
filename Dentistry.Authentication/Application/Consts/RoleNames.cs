@@ -1,6 +1,6 @@
-﻿namespace Domain.Consts
+﻿namespace Application.Consts
 {
-    public static class UserRoles
+    public static class RoleNames
     {
         public static string Admin = "admin";
         public static string Doctor = "doctor";

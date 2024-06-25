@@ -4,9 +4,8 @@ namespace Domain.Repositories
 {
     public interface IUsersRepository : IRepository<User>
     {
-        bool CheckPassword(User user, string password);
-        Task<IEnumerable<Role>> GetUserRolesAsync(User user);
-        Task<User?> FindByPhoneNumberAsync(string phoneNumber, bool includeRefreshTokens = false);
+        Task<User?> GetDetailedInfoByPhoneNumberAsync(string phoneNumber);
         Task<IEnumerable<User>> GetUsersWithRolesAsync();
+        Task<bool> Exists(string phoneNumber);
     }
 }
