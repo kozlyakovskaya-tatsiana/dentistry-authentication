@@ -51,9 +51,9 @@ namespace Persistence
                 const string password = "default_password";
                 const string passwordHash = "$2a$11$l3Tfn90Fk3IrlzWjLTbYLO.TorOFClsEeUVaWTaSjaqdHH/SynGVu";
 
-                var admin = User.Create("111111", "admin@test.com", passwordHash, new[] { adminRole }, null);
-                var user = User.Create("222222", "doctor@test.com", passwordHash, new[] { doctorRole }, null);
-                var patient = User.Create("333333", "patient@test.com", passwordHash, new[] { patientRole }, null);
+                var admin = User.Create("+375296026404", "admin@test.com", passwordHash, new[] { adminRole }, null);
+                var user = User.Create("+375296026405", "doctor@test.com", passwordHash, new[] { doctorRole }, null);
+                var patient = User.Create("+375296026406", "patient@test.com", passwordHash, new[] { patientRole }, null);
                 
                 _dentistryAuthenticationContext.Users.AddRange(admin, user, patient);
 

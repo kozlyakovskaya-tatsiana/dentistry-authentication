@@ -3,21 +3,17 @@
     public class User : BaseEntity
     {
         private User(){ }
-        public string PhoneNumber { get; private set; }
-        public string Email { get; private set; }
-        public string PasswordHash { get; private set;  }
-        public IEnumerable<RefreshToken>? RefreshTokens { get; private set; }
-        public IEnumerable<Role> Roles { get; private set; }
-        public void SetRefreshTokens(IEnumerable<RefreshToken>? refreshTokens)
-        {
-            RefreshTokens = refreshTokens ?? Enumerable.Empty<RefreshToken>() ;
-        }
+        public string PhoneNumber { get; private init; }
+        public string Email { get; private init; }
+        public string PasswordHash { get; private init;  }
+        public IEnumerable<RefreshToken>? RefreshTokens { get; private init; }
+        public IEnumerable<Role> Roles { get; private init; }
         public static User Create(
             string phoneNumber,
             string email,
             string passwordHash,
-            IEnumerable<Role>? roles,
-            IEnumerable<RefreshToken>? refreshTokens)
+            IEnumerable<Role> roles,
+            IEnumerable<RefreshToken>? refreshTokens = null)
         {
             if (string.IsNullOrWhiteSpace(phoneNumber))
             {

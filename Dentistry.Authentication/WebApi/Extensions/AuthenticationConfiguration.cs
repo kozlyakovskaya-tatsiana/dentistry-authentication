@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text;
-using Application.Consts;
+using Application.Constants;
 using Application.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence;
@@ -11,9 +12,10 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DentistryAuthenticationContext))]
-    partial class DentistryAuthenticationContextModelSnapshot : ModelSnapshot
+    [Migration("20240709095716_limits")]
+    partial class limits
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,10 +90,6 @@ namespace Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-
-                    b.HasCheckConstraint("CK_User_Email", "\"Email\" ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'");
-
-                    b.HasCheckConstraint("CK_User_PhoneNumber", "\"PhoneNumber\" ~* '^\\+375(25|29|33|44)\\d{7}$'");
                 });
 
             modelBuilder.Entity("RoleUser", b =>

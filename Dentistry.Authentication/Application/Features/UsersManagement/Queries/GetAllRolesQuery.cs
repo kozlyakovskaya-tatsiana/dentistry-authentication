@@ -1,5 +1,5 @@
 ﻿using Application.DTO;
-using Domain.Repositories;
+using Domain.IRepositories;
 using Mapster;
 using MediatR;
 

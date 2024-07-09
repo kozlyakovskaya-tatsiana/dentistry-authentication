@@ -19,7 +19,6 @@ namespace Application
 
             services.AddScoped<IPasswordHashService, PasswordHashService>();
             services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IPasswordManagerService, PasswordManagerService>();
         }
     }
 }

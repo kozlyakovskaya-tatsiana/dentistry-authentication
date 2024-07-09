@@ -9,6 +9,6 @@ namespace Application.Services.Interfaces
         string GenerateRefreshToken();
         ClaimsPrincipal GetPrincipalFromExpiredToken(string accessToken);
         IEnumerable<Claim> GenerateUserClaims(User user);
-        Task SaveRefreshTokenAsync(User user, string token);
+        Task SaveRefreshTokenAsync(User user, string token, CancellationToken cancellationToken);
     }
 }

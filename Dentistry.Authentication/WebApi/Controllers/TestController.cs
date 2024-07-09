@@ -1,4 +1,4 @@
-﻿using Application.Consts;
+﻿using Application.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

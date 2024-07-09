@@ -4,7 +4,7 @@ using Mapster;
 
 namespace Application.DTO
 {
-    public class UserDto : BaseDto<User, UserDto>
+    public class UserWithRolesDto : BaseDto<User, UserWithRolesDto>
     {
         public Guid Id { get; set; }
         public string PhoneNumber { get; set; }

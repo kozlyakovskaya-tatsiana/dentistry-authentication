@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Domain.Repositories
+namespace Domain.IRepositories
 {
     public interface IRefreshTokensRepository : IRepository<RefreshToken>
     {

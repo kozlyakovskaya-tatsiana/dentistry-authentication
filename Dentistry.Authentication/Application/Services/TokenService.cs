@@ -2,11 +2,11 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Application.Consts;
+using Application.Constants;
 using Application.Options;
 using Application.Services.Interfaces;
 using Domain.Entities;
-using Domain.Repositories;
+using Domain.IRepositories;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -87,7 +87,9 @@ namespace Application.Services
             return claims;
         }
 
-        public async Task SaveRefreshTokenAsync(User user, string token)
+        // move it back OR NOT
+
+        public async Task SaveRefreshTokenAsync(User user, string token, CancellationToken cancellationToken)
         {
             if (user is null)
                 throw new ArgumentNullException(nameof(user));
@@ -97,8 +99,8 @@ namespace Application.Services
             var refreshTokenExpiry = DateTimeOffset.UtcNow.AddMinutes(_jwtOptions.RefreshTokenLifeTimeInMinutes);
             var refreshToken = RefreshToken.Create(token, refreshTokenExpiry, user);
 
-            _refreshTokensRepository.Create(refreshToken);
-            await _refreshTokensRepository.SaveAsync();
+            await _refreshTokensRepository.CreateAsync(refreshToken);
+            await _refreshTokensRepository.SaveAsync(cancellationToken);
         }
     }
 }

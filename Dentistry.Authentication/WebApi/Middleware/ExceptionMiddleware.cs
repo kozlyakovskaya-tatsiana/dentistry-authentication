@@ -31,12 +31,14 @@ namespace WebApi.Middleware
                 ArgumentException => (int)HttpStatusCode.BadRequest,
                 KeyNotFoundException => (int)HttpStatusCode.NotFound,
                 EntityAlreadyExistException => (int)HttpStatusCode.Conflict,
+                OperationCanceledException => 499,
                 _ => (int)HttpStatusCode.InternalServerError
             };
 
             await context.Response.WriteAsync(new ErrorDetails()
             {
                 StatusCode = context.Response.StatusCode,
+                Message = exception.Message
             }.ToString());
         }
     }
@@ -44,6 +46,7 @@ namespace WebApi.Middleware
     public class ErrorDetails
     {
         public int StatusCode { get; set; }
+        public string Message { get; set; }
         public override string ToString()
         {
             return JsonSerializer.Serialize(this);

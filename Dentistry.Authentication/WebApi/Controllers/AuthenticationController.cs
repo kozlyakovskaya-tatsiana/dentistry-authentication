@@ -16,9 +16,9 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginUserCommand loginUserCommand)
+        public async Task<IActionResult> Login(LoginUserCommand loginUserCommand, CancellationToken cancellationToken)
         {
-            var loginResponse = await _mediator.Send(loginUserCommand);
+            var loginResponse = await _mediator.Send(loginUserCommand, cancellationToken);
 
             return Ok(loginResponse);
         }

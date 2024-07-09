@@ -1,13 +1,13 @@
 ﻿using Application.DTO;
-using Domain.Repositories;
+using Domain.IRepositories;
 using Mapster;
 using MediatR;
 
 namespace Application.Features.UsersManagement.Queries
 {
-    public record GetUsersQuery : IRequest<IEnumerable<UserDto>> { }
+    public record GetUsersQuery : IRequest<IEnumerable<UserWithRolesDto>> { }
 
-    public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, IEnumerable<UserDto>>
+    public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, IEnumerable<UserWithRolesDto>>
     {
         private readonly IUsersRepository _usersRepository;
 
@@ -16,11 +16,11 @@ namespace Application.Features.UsersManagement.Queries
             _usersRepository = usersRepository;
         }
 
-        public async Task<IEnumerable<UserDto>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UserWithRolesDto>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
             var users = await _usersRepository.GetUsersWithRolesAsync();
 
-            return users.Adapt<IEnumerable<UserDto>>();
+            return users.Adapt<IEnumerable<UserWithRolesDto>>();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Application.Exceptions;
 using Application.Services.Interfaces;
 using Domain.Entities;
-using Domain.Repositories;
+using Domain.IRepositories;
 using FluentValidation;
 using MediatR;
 
@@ -37,17 +37,16 @@ namespace Application.Features.UsersManagement.Commands
             }
 
             var isUserAlreadyExisting = await _usersRepository.Exists(request.PhoneNumber);
-
             if (isUserAlreadyExisting)
                 throw new EntityAlreadyExistException($"User with phone number {request.PhoneNumber} already exists.");   
 
             var passwordHash = _passwordHashService.Hash(request.Password);
 
-            var user = User.Create(request.PhoneNumber, request.Email, passwordHash, new[] { role }, null);
+            var user = User.Create(request.PhoneNumber, request.Email, passwordHash, new[] { role });
 
-            _usersRepository.Create(user);
+            await _usersRepository.CreateAsync(user);
 
-            await _usersRepository.SaveAsync();
+            await _usersRepository.SaveAsync(cancellationToken);
         }
     }
 
@@ -55,10 +54,16 @@ namespace Application.Features.UsersManagement.Commands
     {
         public CreateUserCommandValidator()
         {
-            RuleFor(x => x.PhoneNumber).NotEmpty();
-            RuleFor(x => x.Password).NotEmpty();
-            RuleFor(x => x.RoleId).NotEmpty();
-            RuleFor(x => x.Email).EmailAddress();
+            RuleFor(x => x.PhoneNumber)
+                .NotEmpty().WithMessage("Phone number is required.")
+                .Matches(@"^\+375(25|29|33|44)\d{7}$").WithMessage("It should be Belarusian number");
+            RuleFor(x => x.Password)
+                .NotEmpty().WithMessage("Password is required.")
+                .MinimumLength(6).WithMessage("Password must contain at least 6 symbols");
+            RuleFor(x => x.RoleId)
+                .NotEmpty().WithMessage("Role is required");
+            RuleFor(x => x.Email)
+                .EmailAddress().WithMessage("Email address is not valid.");
         }
     }
 }

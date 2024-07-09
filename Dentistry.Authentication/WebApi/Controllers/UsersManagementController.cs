@@ -1,4 +1,4 @@
-﻿using Application.Consts;
+﻿using Application.Constants;
 using Application.Features.UsersManagement.Commands;
 using Application.Features.UsersManagement.Queries;
 using MediatR;

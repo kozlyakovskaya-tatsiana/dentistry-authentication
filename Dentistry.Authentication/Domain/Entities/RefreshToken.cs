@@ -3,10 +3,10 @@
     public class RefreshToken : BaseEntity
     {
         private RefreshToken() {}
-        public string Token { get; private set; }
-        public DateTimeOffset ExpireDateTime { get; private set; }
-        public User User { get; private set; }
-        public Guid UserId { get; private set; }
+        public string Token { get; private init; }
+        public DateTimeOffset ExpireDateTime { get; private init; }
+        public User User { get; private init; }
+        public Guid UserId { get; private init; }
 
         public static RefreshToken Create(string token, DateTimeOffset expireDateTime, User user)
         {
@@ -19,7 +19,8 @@
             {
                 Token = token, 
                 ExpireDateTime = expireDateTime,
-                User = user
+                User = user,
+                UserId = user.Id
             };
         }
     }

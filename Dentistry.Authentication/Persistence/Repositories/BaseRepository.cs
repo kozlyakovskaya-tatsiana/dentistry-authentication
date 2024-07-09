@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Domain.Entities;
-using Domain.Repositories;
+using Domain.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
@@ -33,9 +33,9 @@ namespace Persistence.Repositories
             return await DbSet.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public void Create(TEntity entity)
+        public async Task CreateAsync(TEntity entity)
         {
-            DbSet.Add(entity);
+            await DbSet.AddAsync(entity);
         }
 
         public void Update(TEntity entity)
@@ -52,9 +52,9 @@ namespace Persistence.Repositories
             DbSet.Remove(entity);
         }
 
-        public async Task SaveAsync()
+        public async Task SaveAsync(CancellationToken cancellationToken)
         {
-            await Context.SaveChangesAsync();
+            await Context.SaveChangesAsync(cancellationToken);
         }
     }
 }
