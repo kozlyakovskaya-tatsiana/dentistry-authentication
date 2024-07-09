@@ -5,20 +5,19 @@ using Application.Services.Interfaces;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Application
+namespace Application;
+
+public static class ApplicationServicesInjection
 {
-    public static class ApplicationServicesInjection
+    public static void AddApplicationServices(this IServiceCollection services)
     {
-        public static void AddApplicationServices(this IServiceCollection services)
-        {
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllRolesQuery).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllRolesQuery).Assembly));
 
-            services.RegisterMapsterConfiguration();
+        services.RegisterMapsterConfiguration();
 
-            services.AddValidatorsFromAssembly(typeof(ApplicationServicesInjection).Assembly);
+        services.AddValidatorsFromAssembly(typeof(ApplicationServicesInjection).Assembly);
 
-            services.AddScoped<IPasswordHashService, PasswordHashService>();
-            services.AddScoped<ITokenService, TokenService>();
-        }
+        services.AddScoped<IPasswordHashService, PasswordHashService>();
+        services.AddScoped<ITokenService, TokenService>();
     }
 }

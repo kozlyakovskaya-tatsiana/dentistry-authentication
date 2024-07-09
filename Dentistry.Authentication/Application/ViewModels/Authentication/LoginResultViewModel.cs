@@ -1,8 +1,7 @@
-﻿namespace Application.ViewModels.Authentication
+﻿namespace Application.ViewModels.Authentication;
+
+public class LoginResultViewModel
 {
-    public class LoginResultViewModel
-    {
-        public string AccessToken { get; set; }
-        public string RefreshToken { get; set; }
-    }
+    public string AccessToken { get; set; }
+    public string RefreshToken { get; set; }
 }

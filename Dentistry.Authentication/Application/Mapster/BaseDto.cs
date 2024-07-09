@@ -1,33 +1,32 @@
 ﻿using Mapster;
 
-namespace Application.Mapster
+namespace Application.Mapster;
+
+public abstract class BaseDto<TEntity, TDto> : IRegister
+    where TDto : class
+    where TEntity : class
 {
-    public abstract class BaseDto<TEntity, TDto> : IRegister
-        where TDto : class
-        where TEntity : class
+    public TEntity ToEntity()
     {
-        public TEntity ToEntity()
-        {
-            return this.Adapt<TEntity>();
-        }
+        return this.Adapt<TEntity>();
+    }
 
-        public static TDto FromEntity(TEntity entity)
-        {
-            return entity.Adapt<TDto>();
-        }
+    public static TDto FromEntity(TEntity entity)
+    {
+        return entity.Adapt<TDto>();
+    }
 
-        private TypeAdapterConfig Config { get; set; }
+    private TypeAdapterConfig Config { get; set; }
 
-        public virtual void AddCustomMappings() { }
+    public virtual void AddCustomMappings() { }
 
-        protected TypeAdapterSetter<TEntity, TDto> SetCustomMappings() => Config.ForType<TEntity, TDto>();
+    protected TypeAdapterSetter<TEntity, TDto> SetCustomMappings() => Config.ForType<TEntity, TDto>();
 
-        protected TypeAdapterSetter<TDto, TEntity> SetCustomMappingsInverse() => Config.ForType<TDto, TEntity>();
+    protected TypeAdapterSetter<TDto, TEntity> SetCustomMappingsInverse() => Config.ForType<TDto, TEntity>();
 
-        public void Register(TypeAdapterConfig config)
-        {
-            Config = config;
-            AddCustomMappings();
-        }
+    public void Register(TypeAdapterConfig config)
+    {
+        Config = config;
+        AddCustomMappings();
     }
 }

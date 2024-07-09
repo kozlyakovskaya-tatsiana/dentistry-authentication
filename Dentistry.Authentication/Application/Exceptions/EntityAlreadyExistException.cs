@@ -1,7 +1,7 @@
-﻿namespace Application.Exceptions
+﻿namespace Application.Exceptions;
+
+public class EntityAlreadyExistException : Exception
 {
-    public class EntityAlreadyExistException : Exception
-    {
-        public EntityAlreadyExistException(string message) : base(message) { }
-    }
+    public EntityAlreadyExistException(string message) : base(message) { }
 }
+// add not found exception

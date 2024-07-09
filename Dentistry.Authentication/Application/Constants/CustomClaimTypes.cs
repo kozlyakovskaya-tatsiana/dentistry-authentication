@@ -1,7 +1,6 @@
-﻿namespace Application.Constants
+﻿namespace Application.Constants;
+
+public static class CustomClaimTypes
 {
-    public static class CustomClaimTypes
-    {
-        public const string UserId = "uid";
-    }
+    public const string UserId = "uid";
 }

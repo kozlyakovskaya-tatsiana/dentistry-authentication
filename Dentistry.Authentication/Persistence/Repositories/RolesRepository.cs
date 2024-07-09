@@ -1,11 +1,10 @@
 ﻿using Domain.Entities;
 using Domain.IRepositories;
 
-namespace Persistence.Repositories
+namespace Persistence.Repositories;
+
+public class RolesRepository : BaseRepository<Role>, IRolesRepository
 {
-    public class RolesRepository : BaseRepository<Role>, IRolesRepository
-    {
-        public RolesRepository(DentistryAuthenticationContext context) : base(context)
-        { }
-    }
+    public RolesRepository(DentistryAuthenticationContext context) : base(context)
+    { }
 }
